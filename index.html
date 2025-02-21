@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu Amor</title>
     <style>
+        /* Estilos das páginas */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background: linear-gradient(135deg, #1a1a1a, #4d4d4d);
+            background: linear-gradient(135deg, #202020, #3F0837);
             color: #fff;
             margin: 0;
             padding: 20px;
@@ -20,32 +21,68 @@
             font-size: 24px;
             margin: 20px 0;
             padding: 15px;
-            border: 2px solid #fff;
+            border: 2px solid #770E69;
             border-radius: 10px;
             background-color: rgba(255, 255, 255, 0.1);
             width: fit-content;
             margin-left: auto;
             margin-right: auto;
+            box-shadow: 0 0 15px #770E69;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 15px #770E69; }
+            50% { box-shadow: 0 0 30px #770E69; }
+            100% { box-shadow: 0 0 15px #770E69; }
         }
         .foto-container {
-            display: flex; /* Usamos flexbox para centralizar */
-            justify-content: center; /* Alinha ao centro horizontalmente */
-            margin: 20px 0; /* Espaço acima e abaixo do contêiner */
+            display: flex; 
+            justify-content: center; 
+            margin: 20px 0; 
+            position: relative; 
+            cursor: pointer; 
         }
         .foto {
             width: 100%;
             max-width: 600px;
             height: auto;
-            display: none;
+            display: none; /* Por padrão, não exibir fotos */
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            margin: 0 10px; /* Espaço entre as imagens */
+            opacity: 0; /* Opacidade inicial como zero */
+            transition: opacity 1s ease-in-out; /* Animação de transição */
+        }
+        .foto.visible {
+            display: block; /* Mostra a foto */
+            opacity: 1; /* Opacidade total para fotos visíveis */
         }
         h2 {
             margin: 20px 0 10px;
         }
         p {
             margin: 0 0 20px;
+        }
+        /* Estilos dos botões */
+        .botao-whatsapp {
+            display: inline-block;
+            margin: 20px; /* Espaçamento entre os botões */
+            padding: 15px 40px; /* Aumenta a largura e altura do botão */
+            font-size: 20px; /* Aumenta o tamanho da fonte */
+            background-color: rgba(119, 14, 105, 0.9); /* Cor do preenchimento dos botões */
+            color: white;
+            border: 2px solid #770E69; /* Borda de 2px */
+            border-radius: 10px; /* Borda arredondada */
+            cursor: pointer;
+            text-decoration: none; /* Remove sublinhado do link */
+            position: relative; /* Para a animação da borda */
+            overflow: hidden; /* Para esconder partes que saem do botão */
+            box-shadow: 0 0 15px rgba(119, 14, 105, 0.9); /* Sombra do botão */
+            transition: background-color 0.3s, box-shadow 0.3s; /* Transição suave */
+        }
+        /* Efeito de pulsar na borda */
+        .botao-whatsapp:hover {
+            background-color: #9e0d67; /* Cor ao passar o mouse */
+            box-shadow: 0 0 25px rgba(119, 14, 105, 1); /* Efeito de brilho ao passar o mouse */
         }
     </style>
 </head>
@@ -54,7 +91,7 @@
     <h1>Nossa História:&nbsp;&nbsp;</h1>
     <div class="contador" id="contador"></div>
     
-    <div class="foto-container">
+    <div class="foto-container" onclick="trocarFoto(event)">
         <img class="foto" id="foto1" src="https://imgur.com/VvmF1Vd.jpg" alt="Foto 1">
         <img class="foto" id="foto2" src="https://imgur.com/Ri7Spnu.jpg" alt="Foto 2">
         <img class="foto" id="foto3" src="https://imgur.com/offYyd5.jpg" alt="Foto 3">
@@ -67,9 +104,13 @@
     <h2>Giovanna Castro</h2>
     <p id="mensagem">Eu te amo!&nbsp; &nbsp;&nbsp;</p>
 
+    <!-- Botões para enviar mensagem pelo WhatsApp -->
+    <a href="https://wa.me/5511990224104?text=Eu%20te%20amo!" class="botao-whatsapp" target="_blank">Para Ele</a>
+    <a href="https://wa.me/5511952542049?text=Eu%20te%20amo!" class="botao-whatsapp" target="_blank">Para Ela</a>
+
     <script>
         // Contador de tempo
-        const dataInicio = new Date("2024-11-22T00:00:00"); // Data de início
+        const dataInicio = new Date("2024-11-22T00:00:00");
         const contadorEl = document.getElementById("contador");
 
         function atualizarContador() {
@@ -80,23 +121,43 @@
             const dias = Math.floor((tempoJuntos % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
             const horas = Math.floor((tempoJuntos % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutos = Math.floor((tempoJuntos % (1000 * 60 * 60)) / (1000 * 60));
-            const segundos = Math.floor((tempoJuntos % (1000 * 60)) / 1000); // Cálculo dos segundos
-            contadorEl.innerText = `${anos} anos, ${meses} meses, ${dias} dias, ${horas} horas, ${minutos} minutos, ${segundos} segundos`; // Adicionando segundos
+            const segundos = Math.floor((tempoJuntos % (1000 * 60)) / 1000);
+            contadorEl.innerText = `${anos} anos, ${meses} meses, ${dias} dias, ${horas} horas, ${minutos} minutos, ${segundos} segundos`;
         }
 
         // Slideshow de fotos
         let index = 0;
         const fotos = document.getElementsByClassName("foto");
-        function mostrarFoto() {
-            for (let i = 0; i < fotos.length; i++) {
-                fotos[i].style.display = i === index ? "block" : "none";
-            }
-            index = (index + 1) % fotos.length;
-        }
-        setInterval(mostrarFoto, 3000); // Troca de fotos a cada 3 segundos
         mostrarFoto(); // Mostra a primeira foto
 
-        setInterval(atualizarContador, 1000); // Atualiza o contador a cada segundo
+        function mostrarFoto() {
+            for (let i = 0; i < fotos.length; i++) {
+                if (i === index) {
+                    fotos[i].classList.add("visible"); // Adiciona a classe 'visible'
+                } else {
+                    fotos[i].classList.remove("visible"); // Remover a classe 'visible' das outras fotos
+                }
+            }
+        }
+
+        function trocarFoto(event) {
+            const container = document.querySelector('.foto-container');
+            const largura = container.clientWidth;
+            const cliqueX = event.clientX - container.getBoundingClientRect().left;
+
+            // Verifica a posição do clique
+            index = cliqueX < largura / 2 ? (index - 1 + fotos.length) % fotos.length : (index + 1) % fotos.length;
+            mostrarFoto(); // Mostra a nova foto com animação
+        }
+
+        function avancarFotoAutomaticamente() {
+            index = (index + 1) % fotos.length; // Avança para a próxima foto
+            mostrarFoto(); // Mostra a nova foto com animação
+        }
+
+        // Atualiza o contador a cada segundo
+        setInterval(atualizarContador, 1000);
+        setInterval(avancarFotoAutomaticamente, 5000); // Avança automaticamente a cada 5 segundos
     </script>
 </body>
 </html>
